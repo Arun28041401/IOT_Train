@@ -11,7 +11,7 @@ LIDARLite myLidar;
 #define LASER_PIN 2
 
 // Threshold value for Lidar sensor
-#define THRESHOLD 50
+#define THRESHOLD 55
 
 void setup() {
   // Initialize serial communication
@@ -29,11 +29,11 @@ void loop() {
   // Read data from Lidar sensor
   float distance = myLidar.distance();
 
-  // Check if Lidar sensor detects an object within the threshold distance
+  // Lidar sensor detects an object within the threshold distance
   if (distance < THRESHOLD) {
     // If so, check if laser sensor also detects an object
     if (digitalRead(LASER_PIN) == HIGH) {
-      // If both sensors detect an object, trigger an alarm
+      //Sensors detect an object, trigger an alarm
       Serial.println("Collision Alert!");
     }
   }
