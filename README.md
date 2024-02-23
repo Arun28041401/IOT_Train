@@ -31,7 +31,6 @@ void loop() {
 
   // Lidar sensor detects an object within the threshold distance
   if (distance < THRESHOLD) {
-    // If so, check if laser sensor also detects an object
     if (digitalRead(LASER_PIN) == HIGH) {
       //Sensors detect an object, trigger an alarm
       Serial.println("Collision Alert!");
