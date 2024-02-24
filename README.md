@@ -6,7 +6,7 @@
 MFRC522 rfid(SS_PIN, RST_PIN);
 int prevCardID = -1;
 unsigned long prevCardTime = 0;
-const unsigned long debounceTime = 500; // debounce time in milliseconds
+const unsigned long debounceTime = 5000; // debounce time in milliseconds
 void setup() {
   Serial.begin(9600);
   SPI.begin();
