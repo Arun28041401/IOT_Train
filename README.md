@@ -13,21 +13,17 @@ void setup()
   mfrc522.PCD_Init();  
   Serial.println("Waiting...");
   Serial.println();
-
 }
 void loop()
 {
-  // Look for new cards
   if ( ! mfrc522.PICC_IsNewCardPresent())
   {
     return;
   }
-  // Select one of the cards
   if ( ! mfrc522.PICC_ReadCardSerial())
   {
     return;
   }
-  //Show UID on serial monitor
   Serial.print("Train 1 identified");
   String content= "";
   byte letter;
@@ -41,7 +37,7 @@ void loop()
   Serial.println();
   Serial.print("Train 1 in Lane 1 ");
   content.toUpperCase();
-  if (content.substring(1) == "F9 D1 F3 6E") //change here the UID of the card/cards that you want to give access
+  if (content.substring(1) == "F9 D1 F3 6E")
   {
     Serial.println("Authorized access");
     Serial.println();
@@ -76,39 +72,23 @@ void loop()
     delay(200);
     digitalWrite(7,0);
     delay(1000);
-  }
- 
- 
+  } 
 } 
 #include <Wire.h>
 #include <LIDARLite.h>
-
-// Lidar initialization
 LIDARLite myLidar;
 #define LIDAR_ADDRESS 0x62
-
-// Laser initialization
 #define LASER_PIN 2
-
 // Threshold value for Lidar sensor
 #define THRESHOLD 55
-
 void setup() {
-  // Initialize serial communication
   Serial.begin(9600);
-
-  // Initialize Lidar sensor
   myLidar.begin(0, LIDAR_ADDRESS);
   myLidar.configure(0);
-
-  // Initialize laser sensor
   pinMode(LASER_PIN, INPUT);
 }
-
 void loop() {
-  // Read data from Lidar sensor
   float distance = myLidar.distance();
-
   // Lidar sensor detects an object within the threshold distance
   if (distance < THRESHOLD) {
     if (digitalRead(LASER_PIN) == HIGH) {
@@ -116,7 +96,6 @@ void loop() {
       Serial.println("Collision Alert!");
     }
   }
-
   // Delay for 100 milliseconds
   delay(100);
 }
