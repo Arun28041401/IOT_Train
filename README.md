@@ -3,77 +3,33 @@
 #include <MFRC522.h>
 #define SS_PIN 10
 #define RST_PIN 9
-MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance.
-void setup()
-{
-  pinMode(7,1);
-  pinMode(6,1);
+MFRC522 rfid(SS_PIN, RST_PIN);
+int prevCardID = -1;
+unsigned long prevCardTime = 0;
+const unsigned long debounceTime = 500; // debounce time in milliseconds
+void setup() {
   Serial.begin(9600);
-  SPI.begin();      
-  mfrc522.PCD_Init();  
-  Serial.println("Waiting...");
-  Serial.println();
+  SPI.begin();
+  rfid.PCD_Init();
 }
-void loop()
-{
-  if ( ! mfrc522.PICC_IsNewCardPresent())
-  {
+void loop() {
+  if (!rfid.PICC_IsNewCardPresent() || !rfid.PICC_ReadCardSerial()) {
     return;
   }
-  if ( ! mfrc522.PICC_ReadCardSerial())
-  {
-    return;
+  int cardID = rfid.uid.uidByte[0] * 256 + rfid.uid.uidByte[1];
+  if (cardID != prevCardID) {
+    prevCardID = cardID;
+    prevCardTime = millis();
+    Serial.println("New card read: " + String(cardID));
+  } else {
+    unsigned long currentTime = millis();
+    if (currentTime - prevCardTime > debounceTime) {
+      Serial.println("Card still present: " + String(cardID));
+    }
   }
-  Serial.print("Train 1 identified");
-  String content= "";
-  byte letter;
-  for (byte i = 0; i < mfrc522.uid.size; i++)
-  {
-     Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
-     Serial.print(mfrc522.uid.uidByte[i], HEX);
-     content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
-     content.concat(String(mfrc522.uid.uidByte[i], HEX));
-  }
-  Serial.println();
-  Serial.print("Train 1 in Lane 1 ");
-  content.toUpperCase();
-  if (content.substring(1) == "F9 D1 F3 6E")
-  {
-    Serial.println("Authorized access");
-    Serial.println();
-    //delay(3000);
-    digitalWrite(6,1);
-    delay(200);
-    digitalWrite(6,0);
-    delay(200);
-    digitalWrite(6,1);
-    delay(200);
-    digitalWrite(6,0);
-    delay(200);
-    digitalWrite(6,1);
-    delay(200);
-    digitalWrite(6,0);
-    delay(1000);
-  }
-  else
-  {
-    Serial.println(" Train 2 Access denied");
-    Serial.println();
-    //delay(3000);
-    digitalWrite(7,1);
-    delay(200);
-    digitalWrite(7,0);
-    delay(200);
-    digitalWrite(7,1);
-    delay(200);
-    digitalWrite(7,0);
-    delay(200);
-    digitalWrite(7,1);
-    delay(200);
-    digitalWrite(7,0);
-    delay(1000);
-  } 
-} 
+  rfid.PICC_HaltA();
+  rfid.PCD_StopCrypto1();
+}
 #include <Wire.h>
 #include <LIDARLite.h>
 LIDARLite myLidar;
