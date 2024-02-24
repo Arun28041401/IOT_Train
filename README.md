@@ -20,11 +20,11 @@ void loop() {
   if (cardID != prevCardID) {
     prevCardID = cardID;
     prevCardTime = millis();
-    Serial.println("New card read: " + String(cardID));
+    Serial.println("Train 2 IN: " + String(cardID));
   } else {
     unsigned long currentTime = millis();
     if (currentTime - prevCardTime > debounceTime) {
-      Serial.println("Card still present: " + String(cardID));
+      Serial.println("Train 1 still present: " + String(cardID));
     }
   }
   rfid.PICC_HaltA();
