@@ -1,19 +1,17 @@
 # IOT_Train
 #include <SPI.h>
 #include <MFRC522.h>
- 
 #define SS_PIN 10
 #define RST_PIN 9
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance.
- 
 void setup()
 {
   pinMode(7,1);
   pinMode(6,1);
-  Serial.begin(9600);   // Initiate a serial communication
-  SPI.begin();      // Initiate  SPI bus
-  mfrc522.PCD_Init();   // Initiate MFRC522
-  Serial.println("Approximate your card to the reader...");
+  Serial.begin(9600);
+  SPI.begin();      
+  mfrc522.PCD_Init();  
+  Serial.println("Waiting...");
   Serial.println();
 
 }
@@ -30,7 +28,7 @@ void loop()
     return;
   }
   //Show UID on serial monitor
-  Serial.print("UID tag :");
+  Serial.print("Train 1 identified");
   String content= "";
   byte letter;
   for (byte i = 0; i < mfrc522.uid.size; i++)
@@ -41,7 +39,7 @@ void loop()
      content.concat(String(mfrc522.uid.uidByte[i], HEX));
   }
   Serial.println();
-  Serial.print("Message : ");
+  Serial.print("Train 1 in Lane 1 ");
   content.toUpperCase();
   if (content.substring(1) == "F9 D1 F3 6E") //change here the UID of the card/cards that you want to give access
   {
@@ -63,7 +61,7 @@ void loop()
   }
   else
   {
-    Serial.println(" Access denied");
+    Serial.println(" Train 2 Access denied");
     Serial.println();
     //delay(3000);
     digitalWrite(7,1);
